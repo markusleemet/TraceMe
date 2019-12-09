@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TraceMe</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="Register">Register</string>
+    <string name="not_a_member">Not a member?</string>
+    <string name="Login">Login</string>
+    <string name="logo">Logo</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="start_tracking">Start tracking:</string>
+    <string name="share_location">Share location</string>
+    <string name="bus">Bus</string>
+    <string name="car">Car</string>
+    <string name="walk">Walk</string>
+</resources>
