@@ -32,51 +32,35 @@
         app:layout_constraintTop_toBottomOf="@+id/text_view_start_tracking" />
 
 
-    <HorizontalScrollView
+    <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:checkedButton="@+id/first"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switch_location">
 
-        <com.google.android.material.chip.ChipGroup
+        <RadioButton
+            android:id="@+id/on_foot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layoutDirection="rtl"
-            app:singleLine="true"
-            app:singleSelection="true"
-            tools:layout_editor_absoluteX="113dp"
-            tools:layout_editor_absoluteY="374dp">
+            android:text="@string/on_foot" />
 
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bus"
-                tools:layout_editor_absoluteX="113dp"
-                tools:layout_editor_absoluteY="374dp" />
-
-            <com.google.android.material.chip.Chip
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/bus"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/car"
-            tools:layout_editor_absoluteX="113dp"
-            tools:layout_editor_absoluteY="374dp" />
+            android:text="@string/bus" />
 
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/walk"
-                tools:layout_editor_absoluteX="113dp"
-                tools:layout_editor_absoluteY="374dp" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+        <RadioButton
+            android:id="@+id/car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/car" />
+    </RadioGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
