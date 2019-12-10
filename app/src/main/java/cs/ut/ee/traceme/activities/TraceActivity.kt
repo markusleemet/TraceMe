@@ -23,6 +23,7 @@ class TraceActivity : AppCompatActivity() {
 
         switch_location.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
+                switch_location.text = resources.getString(R.string.location_sharing_is_on)
                 if (ContextCompat.checkSelfPermission(this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED) {
@@ -33,6 +34,7 @@ class TraceActivity : AppCompatActivity() {
                         fineLocationPermissionConstant)
                 }
             }else{
+                switch_location.text = resources.getString(R.string.location_sharing_is_off)
                 Intent(this, LocationService::class.java).also { intent ->
                     stopService(intent)
                 }
@@ -52,6 +54,7 @@ class TraceActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startLocationService()
                 }else{
+                    switch_location.text = resources.getString(R.string.location_sharing_is_off)
                     switch_location.isChecked = false
                     //TOAST to show user information
                     val toast = Toast.makeText(this, "Please grant permission to share your location", Toast.LENGTH_LONG)

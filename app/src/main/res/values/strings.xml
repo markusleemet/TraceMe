@@ -17,4 +17,11 @@
     <string name="channel_name">TraceMe</string>
     <string name="channel_description">Location sharing notification</string>
     <string name="on_foot">on foot</string>
+    <string name="personal_car">personal car</string>
+    <string name="walking">walking</string>
+    <string name="mean_of_travel">Mean of travel:</string>
+    <string name="location_sharing_is_turned_on">Location sharing is turned ON</string>
+    <string name="location_sharing_is_turned_off">Location sharing is turned OFF</string>
+    <string name="location_sharing_is_off">Location sharing is OFF</string>
+    <string name="location_sharing_is_on">Location sharing is ON</string>
 </resources>
