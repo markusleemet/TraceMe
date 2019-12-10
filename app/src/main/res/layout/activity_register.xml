@@ -19,6 +19,7 @@
         app:srcCompat="@mipmap/ic_launcher" />
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:id="@+id/edit_text_register_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,6 +39,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:id="@+id/edit_text_register_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +60,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:id="@+id/edit_text_register_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,6 +81,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:id="@+id/edit_text_register_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,7 +91,8 @@
         app:layout_constraintBottom_toTopOf="@+id/edit_text_register_confirm_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_register_phone">
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_register_phone"
+        app:endIconMode="password_toggle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/text_input_edit_text_register_password"
@@ -98,6 +103,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:id="@+id/edit_text_register_confirm_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,7 +113,8 @@
         app:layout_constraintBottom_toTopOf="@+id/material_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_register_password">
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_register_password"
+        app:endIconMode="password_toggle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/text_input_edit_text_register_confirm_password"
@@ -123,8 +130,8 @@
         android:id="@+id/material_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
         android:onClick="buttonRegisterPressed"
         android:text="@string/Register"

@@ -14,4 +14,6 @@
     <string name="bus">Bus</string>
     <string name="car">Car</string>
     <string name="walk">Walk</string>
+    <string name="channel_name">TraceMe</string>
+    <string name="channel_description">Location sharing notification</string>
 </resources>
