@@ -1,20 +1,32 @@
 package cs.ut.ee.traceme.services
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import cs.ut.ee.traceme.R
 import cs.ut.ee.traceme.activities.TraceActivity
+
 
 class LocationService : Service() {
     private val channelId = "234"
     private val notificationId = 345
     private lateinit var notificationManagerCompat: NotificationManagerCompat
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
 
     override fun onBind(intent: Intent?): IBinder? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -25,13 +37,13 @@ class LocationService : Service() {
         createNotificationChannel()
 
         // Create an explicit intent for an Activity in your app
-        val intent = Intent(this, TraceActivity::class.java).apply {
+        val notificationIntent = Intent(this, TraceActivity::class.java).apply {
             this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         //create notification
-        var notification = NotificationCompat.Builder(this, channelId)
+        val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("TraceMe")
             .setContentText("Your location sharing is turned on")
@@ -47,17 +59,21 @@ class LocationService : Service() {
             notify(notificationId, notification.build())
         }
 
+        //create location request, callback and start location updates
+        fusedLocationClient = FusedLocationProviderClient(this)
+        locationRequest = createLocationRequest()!!
+        locationCallback = createLocationCallback()
+        startLocationUpdates(locationRequest, locationCallback)
 
-        return super.onStartCommand(intent, flags, startId)
+
+        return super.onStartCommand(notificationIntent, flags, startId)
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
 
     override fun onDestroy() {
         Log.i("lüliti", "service is killed")
         notificationManagerCompat.cancel(notificationId)
+        endLocationUpdates()
         super.onDestroy()
     }
 
@@ -76,5 +92,36 @@ class LocationService : Service() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun createLocationRequest():LocationRequest? {
+        Log.i("lüliti", "Created location request")
+        return LocationRequest.create()?.apply {
+            interval = 5000
+            fastestInterval = 3000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+    }
+
+    private fun createLocationCallback(): LocationCallback{
+        Log.i("lüliti", "Created location callback")
+        return object : LocationCallback(){
+            override fun onLocationResult(p0: LocationResult?) {
+                super.onLocationResult(p0)
+                Log.i("lüliti", "got location... I think")
+            }
+        }
+    }
+
+    private fun startLocationUpdates(locationRequest: LocationRequest?, locationCallback: LocationCallback) {
+        Log.i("lüliti", "Location updates are started")
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
+    }
+
+    private fun endLocationUpdates(){
+        Log.i("lüliti", "Location updates are stopped")
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
