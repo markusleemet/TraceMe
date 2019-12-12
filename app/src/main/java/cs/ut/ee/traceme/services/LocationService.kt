@@ -90,8 +90,8 @@ class LocationService : Service() {
     private fun createLocationRequest():LocationRequest? {
         Log.i("lüliti", "Created location request")
         return LocationRequest.create()?.apply {
-            interval = 5000
-            fastestInterval = 3000
+            interval = 3000
+            fastestInterval = 1000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
@@ -101,7 +101,12 @@ class LocationService : Service() {
         return object : LocationCallback(){
             override fun onLocationResult(p0: LocationResult?) {
                 super.onLocationResult(p0)
-                Log.i("lüliti", "got location... I think")
+                if (p0 != null) {
+                    Log.i("lüliti", "longitude -> ${p0.lastLocation.longitude}")
+                    Log.i("lüliti", "latitude -> ${p0.lastLocation.latitude}")
+                }else{
+                    Log.i("lüliti", "received location is null")
+                }
             }
         }
     }

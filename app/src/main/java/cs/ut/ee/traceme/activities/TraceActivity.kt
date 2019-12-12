@@ -58,9 +58,7 @@ class TraceActivity : AppCompatActivity() {
     }
 
 
-    /**
     private fun checkForPermissions(){
-        var allPermissionsAreGranted = false
         //Check if necessary permissions are granted
         val permissionAccessFineLocationApproved = ActivityCompat
             .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -69,71 +67,32 @@ class TraceActivity : AppCompatActivity() {
             .checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED
 
-        if (permissionAccessFineLocationApproved) {
-            if (backgroundLocationPermissionApproved) {
+
+        if (android.os.Build.VERSION.SDK_INT < 29) {
+            if (permissionAccessFineLocationApproved) {
                 addListenerToSwitch()
             } else {
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                    backgroundLocationPermissionConstant)
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    fineAndBackgroundLocationPermissionConstant
+                )
             }
-        } else {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                fineAndBackgroundLocationPermissionConstant
-            )
-        }
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            backgroundLocationPermissionConstant -> {
-                Log.i("lüliti", "backgroud location was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        }else{
+            if (permissionAccessFineLocationApproved) {
+                if (backgroundLocationPermissionApproved) {
                     addListenerToSwitch()
-                }else{
-                    checkForPermissionWhenSwitch()
-                    //TOAST to show user information
-                    val toast = Toast.makeText(this, "Please grant permission to share your location", Toast.LENGTH_LONG)
-                    toast.setGravity(Gravity.TOP, 0, 0)
-                    toast.show()
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                        backgroundLocationPermissionConstant)
                 }
+            } else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                    fineAndBackgroundLocationPermissionConstant
+                )
             }
-            fineAndBackgroundLocationPermissionConstant -> {
-                Log.i("lüliti", "fine location was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
-                Log.i("lüliti", "background location was: ${grantResults[1] == PackageManager.PERMISSION_GRANTED}")
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    addListenerToSwitch()
-                }else{
-                    checkForPermissionWhenSwitch()
-                    //TOAST to show user information
-                    val toast = Toast.makeText(this, "Please grant permission to share your location", Toast.LENGTH_LONG)
-                    toast.setGravity(Gravity.TOP, 0, 0)
-                    toast.show()
-                }
-            }
-        }
-    }**/
-
-    private fun checkForPermissions(){
-        //Check if necessary permissions are granted
-        val permissionAccessFineLocationApproved = ActivityCompat
-            .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED
-
-        if (permissionAccessFineLocationApproved) {
-            addListenerToSwitch()
-        } else {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                fineAndBackgroundLocationPermissionConstant
-            )
         }
     }
 
@@ -147,6 +106,39 @@ class TraceActivity : AppCompatActivity() {
             fineLocationPermissionConstant -> {
                 Log.i("lüliti", "finelocation was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addListenerToSwitch()
+                } else {
+                    checkForPermissionWhenSwitch()
+                    //TOAST to show user information
+                    val toast = Toast.makeText(
+                        this,
+                        "Please grant permission to share your location",
+                        Toast.LENGTH_LONG
+                    )
+                    toast.setGravity(Gravity.TOP, 0, 0)
+                    toast.show()
+                }
+            }
+            backgroundLocationPermissionConstant -> {
+                Log.i("lüliti", "backgroundlocation was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addListenerToSwitch()
+                } else {
+                    checkForPermissionWhenSwitch()
+                    //TOAST to show user information
+                    val toast = Toast.makeText(
+                        this,
+                        "Please grant permission to share your location",
+                        Toast.LENGTH_LONG
+                    )
+                    toast.setGravity(Gravity.TOP, 0, 0)
+                    toast.show()
+                }
+            }
+            fineAndBackgroundLocationPermissionConstant -> {
+                Log.i("lüliti", "fine groundlocation was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
+                Log.i("lüliti", "backgroundgroundlocation was: ${grantResults[1] == PackageManager.PERMISSION_GRANTED}")
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
                     addListenerToSwitch()
                 } else {
                     checkForPermissionWhenSwitch()
