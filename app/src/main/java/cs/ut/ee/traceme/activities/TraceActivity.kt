@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import cs.ut.ee.traceme.R
@@ -22,6 +23,7 @@ class TraceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trace)
+        setSupportActionBar(my_toolbar as Toolbar)
         checkForPermissions()
     }
 
