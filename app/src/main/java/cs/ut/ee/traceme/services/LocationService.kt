@@ -1,9 +1,6 @@
 package cs.ut.ee.traceme.services
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -23,7 +20,6 @@ import cs.ut.ee.traceme.activities.TraceActivity
 class LocationService : Service() {
     private val channelId = "234"
     private val notificationId = 345
-    private lateinit var notificationManagerCompat: NotificationManagerCompat
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -33,13 +29,12 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //open channel for notifications
-        createNotificationChannel()
-
+        //NOTIFICATION
         // Create an explicit intent for an Activity in your app
         val notificationIntent = Intent(this, TraceActivity::class.java).apply {
             this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
+
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         //create notification
@@ -48,17 +43,14 @@ class LocationService : Service() {
             .setContentTitle("TraceMe")
             .setContentText("Your location sharing is turned on")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
             .setAutoCancel(false)
-            .setOngoing(true)
+            .setOngoing(true).build()
 
 
-        notificationManagerCompat = NotificationManagerCompat.from(this)
-        with(notificationManagerCompat) {
-            // notificationId is a unique int for each notification that you must define
-            notify(notificationId, notification.build())
-        }
+        startForeground(notificationId, notification)
 
+
+        //LOCATION
         //create location request, callback and start location updates
         fusedLocationClient = FusedLocationProviderClient(this)
         locationRequest = createLocationRequest()!!
@@ -66,13 +58,14 @@ class LocationService : Service() {
         startLocationUpdates(locationRequest, locationCallback)
 
 
-        return super.onStartCommand(notificationIntent, flags, startId)
+        return super.onStartCommand(intent, flags, startId)
     }
+
+
 
 
     override fun onDestroy() {
         Log.i("lüliti", "service is killed")
-        notificationManagerCompat.cancel(notificationId)
         endLocationUpdates()
         super.onDestroy()
     }

@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_trace.*
 
 class TraceActivity : AppCompatActivity() {
     private val backgroundLocationPermissionConstant = 3442
+    private val fineLocationPermissionConstant = 3444
     private val fineAndBackgroundLocationPermissionConstant = 3443
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +58,7 @@ class TraceActivity : AppCompatActivity() {
     }
 
 
+    /**
     private fun checkForPermissions(){
         var allPermissionsAreGranted = false
         //Check if necessary permissions are granted
@@ -117,5 +119,52 @@ class TraceActivity : AppCompatActivity() {
                 }
             }
         }
+    }**/
+
+    private fun checkForPermissions(){
+        //Check if necessary permissions are granted
+        val permissionAccessFineLocationApproved = ActivityCompat
+            .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+
+        if (permissionAccessFineLocationApproved) {
+            addListenerToSwitch()
+        } else {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                fineAndBackgroundLocationPermissionConstant
+            )
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            fineLocationPermissionConstant -> {
+                Log.i("lüliti", "finelocation was: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addListenerToSwitch()
+                } else {
+                    checkForPermissionWhenSwitch()
+                    //TOAST to show user information
+                    val toast = Toast.makeText(
+                        this,
+                        "Please grant permission to share your location",
+                        Toast.LENGTH_LONG
+                    )
+                    toast.setGravity(Gravity.TOP, 0, 0)
+                    toast.show()
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        killLocationService()
+        super.onDestroy()
     }
 }
