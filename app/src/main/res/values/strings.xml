@@ -24,4 +24,5 @@
     <string name="location_sharing_is_turned_off">Location sharing is turned OFF</string>
     <string name="location_sharing_is_off">Location sharing is OFF</string>
     <string name="location_sharing_is_on">Location sharing is ON</string>
+    <string name="settings">settings</string>
 </resources>
