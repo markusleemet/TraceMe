@@ -39,7 +39,7 @@ class LocationService : Service() {
 
         //create notification
         val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle("TraceMe")
             .setContentText("Your location sharing is turned on")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

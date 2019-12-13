@@ -20,9 +20,15 @@
             android:enabled="true"
             android:exported="false"></service>
 
-        <activity android:name=".activities.TraceActivity" />
-        <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.LoginActivity">
+        <activity
+            android:name=".activities.TraceActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

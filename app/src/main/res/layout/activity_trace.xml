@@ -89,5 +89,14 @@
             android:text="@string/bus" />
     </RadioGroup>
 
+    <ImageView
+        android:id="@+id/image_view_posiitium"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/posiitium_logo" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
