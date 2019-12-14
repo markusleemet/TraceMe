@@ -53,8 +53,17 @@ class TraceActivity : AppCompatActivity() {
     private fun addListenerToSwitch(){
         switch_location.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                switch_location.text = resources.getString(R.string.location_sharing_is_on)
-                startLocationService()
+                Log.i("lüliti", "${radioGroup.checkedRadioButtonId}")
+                if (radioGroup.checkedRadioButtonId != -1) {
+                    switch_location.text = resources.getString(R.string.location_sharing_is_on)
+                    startLocationService()
+                }else{
+                    switch_location.isChecked = false
+                    //TOAST to show user information
+                    val toast = Toast.makeText(this, "Please specify mean of transport first", Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.TOP, 0, 0)
+                    toast.show()
+                }
             }else{
                 switch_location.text = resources.getString(R.string.location_sharing_is_off)
                 killLocationService()
