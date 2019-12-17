@@ -7,8 +7,13 @@
         app:showAsAction="never">
     </item>
     <item
-        android:id="@+id/statistic"
-        android:title="@string/statistics"
+        android:id="@+id/travel_statistics"
+        android:title="@string/travel_statistcks"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/location_statistics"
+        android:title="@string/location_statistics"
         app:showAsAction="never">
     </item>
     <item

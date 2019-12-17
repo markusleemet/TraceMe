@@ -22,7 +22,6 @@ class RegisterActivity : AppCompatActivity() {
     private val phoneRegex: Regex = Regex("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*\$")
     private lateinit var sharedPreferences: SharedPreferences
     private val registerURL = "http://3.134.85.176:8000/api/register"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getBoolean("theme", false)) setTheme(R.style.AppThemeDark) else setTheme(R.style.AppTheme)

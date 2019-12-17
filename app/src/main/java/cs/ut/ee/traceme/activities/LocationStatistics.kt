@@ -1,24 +1,22 @@
 package cs.ut.ee.traceme.activities
 
 import android.content.SharedPreferences
-import android.content.res.TypedArray
 import android.graphics.Color
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.github.kittinunf.fuel.Fuel
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.data.*
 import com.google.gson.Gson
 import cs.ut.ee.traceme.R
+import kotlinx.android.synthetic.main.activity_location_statistcs.*
 import kotlinx.android.synthetic.main.activity_statistics.*
 
-
-class StatisticsActivity : AppCompatActivity() {
+class LocationStatistics : AppCompatActivity() {
     private val statURL = "http://3.134.85.176:8000/api/stat"
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var token: String
@@ -27,7 +25,7 @@ class StatisticsActivity : AppCompatActivity() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getBoolean("theme", false)) setTheme(R.style.AppThemeDark) else setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_statistics)
+        setContentView(R.layout.activity_location_statistcs)
 
         token = intent!!.getStringExtra("token")!!
         Fuel.get(statURL).header("Authorization", "Token $token").also { Log.i("lüliti", "$it") }.response { request, response, result ->
@@ -52,32 +50,38 @@ class StatisticsActivity : AppCompatActivity() {
     }
 
     private fun drawChart(statistics: Stats){
-        //add data to chart
-        val mean_on_foot: Float = statistics.on_foot.split("%")[0].toFloat()
-        val mean_car: Float = statistics.car.split("%")[0].toFloat()
-        val mean_bus: Float = statistics.bus.split("%")[0].toFloat()
-        val mean_subway: Float = statistics.subway.split("%")[0].toFloat()
-        Log.i("lüliti", "$mean_on_foot")
-        Log.i("lüliti", "$mean_car")
-        Log.i("lüliti", "$mean_bus")
-        Log.i("lüliti", "$mean_subway")
-        val pieEntryOnFoot = PieEntry(mean_on_foot, "on foot")
-        val pieEntryCar = PieEntry(mean_car, "car")
-        val pieEntryBus = PieEntry(mean_bus, "bus")
-        val pieEntrySubway = PieEntry(mean_subway, "subway")
-        val entries = arrayListOf<PieEntry>(pieEntryBus, pieEntryCar, pieEntryOnFoot, pieEntrySubway)
+        val north_tartu = statistics.north_tartu.split("%")[0].toFloat()
+        val east_tartu = statistics.east_tartu.split("%")[0].toFloat()
+        val south_tartu = statistics.south_tartu.split("%")[0].toFloat()
+        val west_tartu = statistics.west_tartu.split("%")[0].toFloat()
+        Log.i("lüliti", "north: $north_tartu")
+        Log.i("lüliti", "east: $east_tartu")
+        Log.i("lüliti", "south: $south_tartu")
+        Log.i("lüliti", "west: $west_tartu")
+
+        val northTartuData = PieEntry(north_tartu, "North Tartu")
+        val eastTartuData = PieEntry(east_tartu, "East Tartu")
+        val southTartuData = PieEntry(south_tartu, "South Tartu")
+        val westTartuData = PieEntry(west_tartu, "West Tartu")
+
+
+        val entries = arrayListOf<PieEntry>(northTartuData, eastTartuData, southTartuData, westTartuData)
         val dataSet = PieDataSet(entries, "")
         dataSet.setColors(arrayListOf(Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW))
         val pieData = PieData(dataSet)
-        mean_of_transport_piechart.data = pieData
-        mean_of_transport_piechart.description.isEnabled = false
-        mean_of_transport_piechart.legend.isEnabled = false
+        location_bar_chart.data = pieData
+        location_bar_chart.description.isEnabled = false
+        location_bar_chart.legend.isEnabled = true
+        location_bar_chart.setDrawEntryLabels(false)
+        location_bar_chart.legend.setDrawInside(true)
+        location_bar_chart.holeRadius = 45f
+        location_bar_chart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
+        location_bar_chart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+        location_bar_chart.invalidate()
 
-        mean_of_transport_piechart.holeRadius = 45f
-        mean_of_transport_piechart.setHoleColor(Color.TRANSPARENT)
-        mean_of_transport_piechart.invalidate()
     }
 
     private data class Stats(val car: String, val on_foot: String, val bus: String, val subway: String,
-    val north_tartu: String, val east_Tartu: String, val south_tartu: String, val west_tartu: String){}
+                             val north_tartu: String, val east_tartu: String, val south_tartu: String,
+                             val west_tartu: String){}
 }

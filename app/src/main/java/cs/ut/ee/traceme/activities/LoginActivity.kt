@@ -1,8 +1,10 @@
 package cs.ut.ee.traceme.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -30,13 +32,42 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         text_view_not_a_member.setOnClickListener {
-            val registerIntent = Intent(this, RegisterActivity::class.java)
-            startActivityForResult(registerIntent, 123)
+            buttonRegisterPressed()
         }
+    }
+
+    private fun checkForInternet(): Boolean{
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager.activeNetworkInfo?.isConnected != true) {
+            return false
+        }
+        return true
+    }
+
+    private fun buttonRegisterPressed(){
+        //check for internet
+        if (!checkForInternet()) {
+            //TOAST to show user information
+            val toast = Toast.makeText(this, "You are not connected to internet", Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.TOP, 0, 0)
+            toast.show()
+            return
+        }
+        val registerIntent = Intent(this, RegisterActivity::class.java)
+        startActivityForResult(registerIntent, 123)
     }
 
 
     fun buttonLoginPressed(view: View){
+        //check for internet
+        if (!checkForInternet()) {
+            //TOAST to show user information
+            val toast = Toast.makeText(this, "You are not connected to internet", Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.TOP, 0, 0)
+            toast.show()
+            return
+        }
+
         //get values from inputs
         val email = text_input_edit_text_login_email.text.toString()
         val password = text_input_edit_text_login_password.text.toString()

@@ -164,16 +164,16 @@ class LocationService : Service() {
 
     private fun getMeanOfTransport(meanId: Int): String{
         when(meanId){
-            2131296537 -> {
+            R.id.subway -> {
                 return "subway"
             }
-            2131296335 -> {
+            R.id.car -> {
                 return "car"
             }
-            2131296331 -> {
+            R.id.bus -> {
                 return "bus"
             }
-            2131296469 -> {
+            R.id.on_foot -> {
                 return "on_foot"
             }
             else -> {

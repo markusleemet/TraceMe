@@ -2,9 +2,12 @@ package cs.ut.ee.traceme.activities
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -36,7 +39,13 @@ class TraceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trace)
         setSupportActionBar(my_toolbar)
-        checkForPermissions()
+
+        switch_location.setOnCheckedChangeListener { buttonView, isChecked ->
+            checkForPermissions()
+        }
+
+
+
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.on_foot -> {
@@ -94,8 +103,15 @@ class TraceActivity : AppCompatActivity() {
                 finish()
                 return  true
             }
-            R.id.statistic -> {
+            R.id.travel_statistics -> {
                 val statisticsIntent = Intent(this, StatisticsActivity::class.java)
+                val token = intent.getStringExtra("token")
+                statisticsIntent.putExtra("token", token)
+                startActivityForResult(statisticsIntent, statisticsActivityConstant)
+                return true
+            }
+            R.id.location_statistics -> {
+                val statisticsIntent = Intent(this, LocationStatistics::class.java)
                 val token = intent.getStringExtra("token")
                 statisticsIntent.putExtra("token", token)
                 startActivityForResult(statisticsIntent, statisticsActivityConstant)
@@ -116,6 +132,14 @@ class TraceActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkForGPS(): Boolean{
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            return false
+        }
+        return true
+    }
+
     internal fun killLocationService(){
         sharedPreferences.edit().putBoolean("locationSharing", false).apply()
         Intent(this, LocationService::class.java).also { intent ->
@@ -132,6 +156,7 @@ class TraceActivity : AppCompatActivity() {
     }
 
     private fun addListenerToSwitch(){
+        startLocationService()
         switch_location.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 Log.i("lüliti", "${radioGroup.checkedRadioButtonId}")
@@ -152,7 +177,7 @@ class TraceActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkForPermissionWhenSwitch(){
+    private fun addPermissionCheckToSwitch(){
         switch_location.isChecked = false
         switch_location.setOnCheckedChangeListener { buttonView, isChecked ->
             checkForPermissions()
@@ -169,6 +194,15 @@ class TraceActivity : AppCompatActivity() {
             .checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED
 
+        //check for gps
+        if (checkForGPS() != true) {
+            //TOAST to show user information
+            val toast = Toast.makeText(this, "Please enable location", Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.TOP, 0, 0)
+            toast.show()
+            switch_location.isChecked = false
+            return
+        }
 
         if (android.os.Build.VERSION.SDK_INT < 29) {
             if (permissionAccessFineLocationApproved) {
@@ -210,7 +244,7 @@ class TraceActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     addListenerToSwitch()
                 } else {
-                    checkForPermissionWhenSwitch()
+                    addPermissionCheckToSwitch()
                     //TOAST to show user information
                     val toast = Toast.makeText(
                         this,
@@ -226,7 +260,7 @@ class TraceActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     addListenerToSwitch()
                 } else {
-                    checkForPermissionWhenSwitch()
+                    addPermissionCheckToSwitch()
                     //TOAST to show user information
                     val toast = Toast.makeText(
                         this,
@@ -243,7 +277,7 @@ class TraceActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
                     addListenerToSwitch()
                 } else {
-                    checkForPermissionWhenSwitch()
+                    addPermissionCheckToSwitch()
                     //TOAST to show user information
                     val toast = Toast.makeText(
                         this,

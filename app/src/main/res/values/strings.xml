@@ -45,4 +45,7 @@
     <string name="logout">LogOut</string>
     <string name="subway">subway</string>
     <string name="statistics">statistics</string>
+    <string name="travel_statistcks">Travel statistics</string>
+    <string name="location_statistics">Location statistics</string>
+    <string name="most_frequent_location">Most frequent location:</string>
 </resources>
