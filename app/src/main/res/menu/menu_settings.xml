@@ -3,9 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_settings"
-        android:icon="@android:drawable/ic_menu_manage"
         android:title="@string/settings"
         app:showAsAction="never">
-
+    </item>
+    <item
+        android:id="@+id/statistic"
+        android:title="@string/statistics"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/logout"
+        android:title="@string/logout"
+        app:showAsAction="never">
     </item>
 </menu>

@@ -3,17 +3,25 @@ package cs.ut.ee.traceme.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.gson.Gson
 import cs.ut.ee.traceme.R
+import cs.ut.ee.traceme.activities.LoginActivity
 import cs.ut.ee.traceme.activities.TraceActivity
 
 
@@ -23,12 +31,16 @@ class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
+    private lateinit var sharedPreferences: SharedPreferences
+    private val informURL = "http://3.134.85.176:8000/api/inform"
+    private lateinit var token: String
 
     override fun onBind(intent: Intent?): IBinder? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         //NOTIFICATION
         // Create an explicit intent for an Activity in your app
         val notificationIntent = Intent(this, TraceActivity::class.java).apply {
@@ -56,6 +68,8 @@ class LocationService : Service() {
         locationRequest = createLocationRequest()!!
         locationCallback = createLocationCallback()
         startLocationUpdates(locationRequest, locationCallback)
+
+        token = intent!!.getStringExtra("token")!!
 
 
         return super.onStartCommand(intent, flags, startId)
@@ -90,8 +104,8 @@ class LocationService : Service() {
     private fun createLocationRequest():LocationRequest? {
         Log.i("lüliti", "Created location request")
         return LocationRequest.create()?.apply {
-            interval = 3000
-            fastestInterval = 1000
+            interval = 10000
+            fastestInterval = 10000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
@@ -102,8 +116,33 @@ class LocationService : Service() {
             override fun onLocationResult(p0: LocationResult?) {
                 super.onLocationResult(p0)
                 if (p0 != null) {
-                    Log.i("lüliti", "longitude -> ${p0.lastLocation.longitude}")
-                    Log.i("lüliti", "latitude -> ${p0.lastLocation.latitude}")
+                    val lat = p0.lastLocation.latitude
+                    val lon = p0.lastLocation.longitude
+                    val mean = getMeanOfTransport(sharedPreferences.getInt("meanOfTransport", -1))
+                    val requestBody = Gson().toJson(Inform(lat, lon, mean!!))
+
+                    Log.i("lüliti", "longitude -> ${lon}")
+                    Log.i("lüliti", "latitude -> ${lat}")
+                    Log.i("lüliti", "mean -> ${mean}")
+                    Log.i("lüliti", "token -> ${token}")
+
+
+                    Fuel.post(informURL).header("Authorization", "Token $token").jsonBody(requestBody).response { request, response, result ->
+                        when (response.statusCode) {
+                            201 -> {
+                                Log.i("lüliti", "request was success")
+                            }
+                            500 -> {
+                                Log.i("lüliti", "request failed")
+                            }
+                            else -> {
+                                Log.i("lüliti", "statuscode -> ${response.statusCode}")
+                            }
+                        }
+                    }
+
+
+
                 }else{
                     Log.i("lüliti", "received location is null")
                 }
@@ -122,4 +161,26 @@ class LocationService : Service() {
         Log.i("lüliti", "Location updates are stopped")
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
+
+    private fun getMeanOfTransport(meanId: Int): String{
+        when(meanId){
+            2131296537 -> {
+                return "subway"
+            }
+            2131296335 -> {
+                return "car"
+            }
+            2131296331 -> {
+                return "bus"
+            }
+            2131296469 -> {
+                return "on_foot"
+            }
+            else -> {
+                return ""
+            }
+        }
+    }
+
+    private data class Inform(val lat: Double, val lon: Double, val mean: String){}
 }

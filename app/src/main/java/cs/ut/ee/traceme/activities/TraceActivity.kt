@@ -1,18 +1,20 @@
 package cs.ut.ee.traceme.activities
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import cs.ut.ee.traceme.R
 import cs.ut.ee.traceme.services.LocationService
 import kotlinx.android.synthetic.main.activity_trace.*
@@ -21,13 +23,57 @@ class TraceActivity : AppCompatActivity() {
     private val backgroundLocationPermissionConstant = 3442
     private val fineLocationPermissionConstant = 3444
     private val fineAndBackgroundLocationPermissionConstant = 3443
+    private var doubleBackToExitPressedOnce = false
+    private val settingsActivityConstant = 3444
+    private val statisticsActivityConstant = 3445
+    private lateinit var sharedPreferences: SharedPreferences
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sharedPreferences.getBoolean("theme", false)) setTheme(R.style.AppThemeDark) else setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trace)
         setSupportActionBar(my_toolbar)
         checkForPermissions()
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.on_foot -> {
+                    sharedPreferences.edit().putInt("meanOfTransport", checkedId).apply()
+                    Log.i("lüliti", "checked mean of transport: walking ($checkedId)")
+                }
+                R.id.car -> {
+                    sharedPreferences.edit().putInt("meanOfTransport", checkedId).apply()
+                    Log.i("lüliti", "checked mean of transport:  car ($checkedId)")
+                }
+                R.id.bus -> {
+                    sharedPreferences.edit().putInt("meanOfTransport", checkedId).apply()
+                    Log.i("lüliti", "checked mean of transport: bus ($checkedId)")
+                }
+                R.id.subway -> {
+                    sharedPreferences.edit().putInt("meanOfTransport", checkedId).apply()
+                    Log.i("lüliti", "checked mean of transport: subway ($checkedId)")
+                }
+            }
+        }
+        restoreActivity()
     }
+
+
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Please click BACK again to exit and end positioningd", Toast.LENGTH_SHORT).show()
+
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+    }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_settings, menu)
@@ -35,19 +81,54 @@ class TraceActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.action_settings -> {
+                val settingsIntent = Intent(this, SettingsActivity::class.java)
+                startActivityForResult(settingsIntent, settingsActivityConstant)
+                return true
+            }
+            R.id.logout -> {
+                killLocationService()
+                val finishIntent = Intent()
+                setResult(Activity.RESULT_OK)
+                finish()
+                return  true
+            }
+            R.id.statistic -> {
+                val statisticsIntent = Intent(this, StatisticsActivity::class.java)
+                val token = intent.getStringExtra("token")
+                statisticsIntent.putExtra("token", token)
+                startActivityForResult(statisticsIntent, statisticsActivityConstant)
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     private fun startLocationService(){
-        Intent(this, LocationService::class.java).also { intent ->
-            startService(intent)
+        sharedPreferences.edit().putBoolean("locationSharing", true)
+        Intent(this, LocationService::class.java).also { servicentent ->
+            val token = intent.getStringExtra("token")
+            servicentent.putExtra("token", token)
+            startService(servicentent)
         }
     }
 
-    private fun killLocationService(){
+    internal fun killLocationService(){
+        sharedPreferences.edit().putBoolean("locationSharing", false).apply()
         Intent(this, LocationService::class.java).also { intent ->
             stopService(intent)
         }
+    }
+
+    private fun restoreActivity(){
+        val selectedMeanOfTransport = sharedPreferences.getInt("meanOfTransport", -1)
+        if (selectedMeanOfTransport != -1) {
+            radioGroup.check(selectedMeanOfTransport)
+        }
+        switch_location.isChecked = sharedPreferences.getBoolean("locationSharing", false)
     }
 
     private fun addListenerToSwitch(){
@@ -176,8 +257,14 @@ class TraceActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        killLocationService()
-        super.onDestroy()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when(requestCode){
+            settingsActivityConstant -> {
+                recreate()
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
+        }
     }
 }

@@ -64,6 +64,7 @@
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:checkedButton="@id/on_foot"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,19 +82,26 @@
             android:id="@+id/bus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/personal_car" />
+            android:text="@string/bus" />
 
         <RadioButton
             android:id="@+id/car"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bus" />
+            android:text="@string/personal_car" />
+
+
+        <RadioButton
+            android:id="@+id/subway"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subway" />
     </RadioGroup>
 
     <ImageView
         android:id="@+id/image_view_posiitium"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/logo"
         app:layout_constraintBottom_toBottomOf="parent"
